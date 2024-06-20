@@ -83,6 +83,13 @@ const TodoList = () => {
   };
 
   const handleAction = async (id, action) => {
+    const ongoingActivity = activities.find(activity => activity.status === 'Ongoing');
+
+    if ((action === 'start' || action === 'resume') && ongoingActivity && ongoingActivity._id !== id) {
+      alert('You must pause or end the current activity before starting or resuming another one.');
+      return;
+    }
+
     try {
       const { data } = await axios.put(
         `${window.location.origin}/api/activities/${id}`,
