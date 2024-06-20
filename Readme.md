@@ -16,17 +16,7 @@ This application provides users with the ability to add, start, pause, resume, a
 
 ## Live Demo
 
-Check out the live demo of the Todo Activity List Application [https://todoappmern.vercel.app/](#).
-
-## Screenshots
-
-### Todo List Page
-
-![Todo List](#)
-
-### Activity Logs
-
-![Activity Logs](#)
+Check out the live demo of the Todo Activity List Application [Click Here](https://todoappmern.vercel.app/).
 
 ## Technologies Used
 

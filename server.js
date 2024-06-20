@@ -15,10 +15,13 @@ app.use(express.json());
 
 app.use('/api/auth', authRoutes);
 app.use('/api/activities', activityRoutes);
-app.get("/", (req, res) => { 
-    app.use(express.static(path.resolve(__dirname, "frontend", "build"))); 
-    res.sendFile(path.resolve(__dirname, "frontend", "build", "index.html")); 
-  }); 
+
+
+app.use(express.static(path.join(__dirname, 'frontend', 'build')));
+
+app.get('*', (req, res) => {
+  res.sendFile(path.join(__dirname, 'frontend', 'build', 'index.html'));
+});
 const PORT = process.env.PORT || 8000;
 
 app.listen(PORT, () => console.log(`Server running on port ${PORT}`));

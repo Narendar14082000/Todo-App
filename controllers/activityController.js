@@ -25,7 +25,7 @@ exports.createActivity = async (req, res) => {
 
 exports.updateActivity = async (req, res) => {
   const { id } = req.params;
-  const { action } = req.body;
+  const { action, duration } = req.body;
 
   try {
     const activity = await Activity.findById(id);
@@ -38,13 +38,17 @@ exports.updateActivity = async (req, res) => {
       activity.logs.push({ action: 'Start' });
     } else if (action === 'pause') {
       activity.status = 'Paused';
-      activity.logs.push({ action: 'Resume' });
+      activity.logs.push({ action: 'Pause' });
     } else if (action === 'resume') {
       activity.status = 'Ongoing';
-      activity.logs.push({ action: 'Pause' });
+      activity.logs.push({ action: 'Resume' });
     } else if (action === 'end') {
       activity.status = 'Completed';
       activity.logs.push({ action: 'End' });
+    }
+
+    if (duration !== undefined) {
+      activity.duration = duration;
     }
 
     await activity.save();

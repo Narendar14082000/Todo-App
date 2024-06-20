@@ -1,13 +1,13 @@
 import React, { useState, useEffect } from 'react';
 import axios from 'axios';
-import { useNavigate } from 'react-router-dom'; // Updated to useNavigate
+import { useNavigate } from 'react-router-dom';
 
 const TodoList = () => {
   const [activities, setActivities] = useState([]);
   const [newActivity, setNewActivity] = useState('');
   const [timers, setTimers] = useState({});
   const token = localStorage.getItem('token');
-  const navigate = useNavigate(); // Updated to useNavigate
+  const navigate = useNavigate();
 
   useEffect(() => {
     const fetchActivities = async () => {
@@ -38,8 +38,13 @@ const TodoList = () => {
       setActivities((prevActivities) =>
         prevActivities.map((activity) => {
           if (activity.status === 'Ongoing') {
-            const newDuration = timers[activity._id] + 1;
-            setTimers((prevTimers) => ({ ...prevTimers, [activity._id]: newDuration }));
+            const newDuration = (timers[activity._id] || activity.duration) + 1;
+            setTimers((prevTimers) => {
+              const updatedTimers = { ...prevTimers, [activity._id]: newDuration };
+              return updatedTimers;
+            });
+
+            updateActivityDuration(activity._id, newDuration);
             return { ...activity, duration: newDuration };
           }
           return activity;
@@ -49,6 +54,18 @@ const TodoList = () => {
 
     return () => clearInterval(interval);
   }, [timers]);
+
+  const updateActivityDuration = async (id, duration) => {
+    try {
+      await axios.put(
+        `${window.location.origin}/api/activities/${id}`,
+        { duration },
+        { headers: { Authorization: `Bearer ${token}` } }
+      );
+    } catch (error) {
+      console.error('Error updating activity duration', error);
+    }
+  };
 
   const handleAddActivity = async () => {
     try {
@@ -113,7 +130,7 @@ const TodoList = () => {
 
   const handleLogout = () => {
     localStorage.removeItem('token');
-    navigate('/'); // Updated to use navigate
+    navigate('/');
   };
 
   return (
@@ -146,7 +163,7 @@ const TodoList = () => {
             <tr key={activity._id}>
               <td>{index + 1}</td>
               <td>{activity.name}</td>
-              <td>{formatTime(timers[activity._id] || 0)}</td>
+              <td>{formatTime(activity.duration)}</td>
               <td>
                 {activity.status !== 'Completed' ? (
                   <>
@@ -175,6 +192,7 @@ const TodoList = () => {
                 <button className="btn btn-danger" onClick={() => handleDeleteActivity(activity._id)}>Delete</button>
               </td>
             </tr>
+
           ))}
         </tbody>
       </table>
