@@ -7,6 +7,7 @@ const Signup = () => {
   const [username, setUsername] = useState('');
   const [email, setEmail] = useState('');
   const [password, setPassword] = useState('');
+  const [errorMessage, setErrorMessage] = useState('');
   const navigate = useNavigate();
 
   const handleSubmit = async (e) => {
@@ -15,7 +16,12 @@ const Signup = () => {
       await axios.post(`${window.location.origin}/api/auth/register`, { username, email, password });
       navigate('/');
     } catch (error) {
-      alert('Registration failed');
+      if (error.response && error.response.data && error.response.data.message) {
+        setErrorMessage(error.response.data.message);
+      } else {
+        setErrorMessage('Registration failed');
+      }
+     alert(errorMessage);
     }
   };
 
@@ -53,7 +59,7 @@ const Signup = () => {
             required
           />
         </div>
-        <button type="submit" className="btn btn-primary">Signup</button>
+        <button type="submit"  className="btn btn-primary">Signup</button>
       </form>
       <p className="mt-3">
         Already have an account? <Link to="/">Login</Link>
